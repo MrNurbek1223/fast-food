@@ -27,5 +27,5 @@ urlpatterns = [
     path('order/<int:order_id>/change-status/', OrderStatusChangeView.as_view(), name='change-order-status'),
     path('nearest-branches/', NearestBranchView.as_view(), name='nearest-branches'),
     path('', include(router.urls)),
-]+ static(settings.STATIC_URL, ) + static(settings.MEDIA_URL,
+]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL,
                                                                                            document_root=settings.MEDIA_ROOT)
