@@ -137,4 +137,4 @@ AUTH_USER_MODEL = 'page.User'
 GDAL_LIBRARY_PATH = None
 GDAL_LIBRARY_PATH = env('GDAL_LIBRARY_PATH')
 GEOS_LIBRARY_PATH = env('GEOS_LIBRARY_PATH')
-os.environ['GDAL_LIBRARY_PATH'] = '/usr/lib/libgdal.so'
+GEOS_LIBRARY_PATH = env('GEOS_LIBRARY_PATH', default='/usr/lib/libgeos_c.so')
