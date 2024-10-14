@@ -7,6 +7,12 @@ from app.branch.api.branch.views import BranchViewSet, NearestBranchView
 from app.food.api.food.views import FoodItemViewSet, FoodItemViewSetGet
 from app.order.api.order.views import CreateOrderView, AdminOrderListView, OrderStatusChangeView
 
+from django.contrib import admin
+from django.urls import path
+from qozon import settings
+from django.conf.urls.static import static
+
+
 router = DefaultRouter()
 router.register(r'branches', BranchViewSet, basename='branch')
 router.register(r'fooditems', FoodItemViewSet)
@@ -21,4 +27,5 @@ urlpatterns = [
     path('order/<int:order_id>/change-status/', OrderStatusChangeView.as_view(), name='change-order-status'),
     path('nearest-branches/', NearestBranchView.as_view(), name='nearest-branches'),
     path('', include(router.urls)),
-]
+]+ static(settings.STATIC_URL, ) + static(settings.MEDIA_URL,
+                                                                                           document_root=settings.MEDIA_ROOT)

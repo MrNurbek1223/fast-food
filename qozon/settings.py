@@ -126,16 +126,23 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
+SITE_ID = 1
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
+MEDIA_URL = '/media/'
 STATIC_URL = env('STATIC_URL', default='static/')
 MEDIA_URL = env('MEDIA_URL', default='/media/')
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
+# STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'page.User'
 GDAL_LIBRARY_PATH = None
-GDAL_LIBRARY_PATH = env('GDAL_LIBRARY_PATH')
+GDAL_LIBRARY_PATH = env('GDAL_LIBRARY_PATH', default='/usr/lib/libgdal.so')
 
 GEOS_LIBRARY_PATH = env('GEOS_LIBRARY_PATH', default='/usr/lib/x86_64-linux-gnu/libgeos_c.so')
