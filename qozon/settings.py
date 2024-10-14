@@ -14,7 +14,8 @@ SECRET_KEY = env('SECRET_KEY', default='django-insecure-fi^kdlv3_!1$6n&0i$9^d_4i
 
 DEBUG = env.bool('DEBUG', default=True)
 
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
+# ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
+ALLOWED_HOSTS = ['fastfood.dtpi-dictionary.uz', 'localhost', '127.0.0.1']
 
 
 
