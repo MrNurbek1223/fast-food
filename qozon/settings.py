@@ -7,17 +7,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-
-
 SECRET_KEY = env('SECRET_KEY', default='django-insecure-fi^kdlv3_!1$6n&0i$9^d_4i3_l^xgpal!&)zlb%!#=0=z!f2o')
-
 
 DEBUG = env.bool('DEBUG', default=True)
 
 # ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
 ALLOWED_HOSTS = ['fastfood.dtpi-dictionary.uz', 'localhost', '127.0.0.1']
-
-
 
 INSTALLED_APPS = [
     'django.contrib.gis',
@@ -28,6 +23,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'drf_yasg',
     'page',
     'app.branch',
     'app.food',
