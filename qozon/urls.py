@@ -28,6 +28,7 @@ schema_view = get_schema_view(
     permission_classes=(permissions.AllowAny,),
 )
 
+
 router = DefaultRouter()
 router.register(r'branches', BranchViewSet, basename='branch')
 router.register(r'fooditems', FoodItemViewSet)
