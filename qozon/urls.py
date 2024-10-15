@@ -34,7 +34,7 @@ router.register(r'fooditems_get', FoodItemViewSetGet, basename='fooditem-get')
 urlpatterns = [
                   path('admin/', admin.site.urls),
                   path('register/', register_user),
-                  path('login/', LoginAPIView.as_view(), name='token_obtain_pair'),
+                  path('accounts/login/', LoginAPIView.as_view(), name='token_obtain_pair'),
                   path('get-orders/', AdminOrderListView.as_view(), name='get-orders'),
                   path('create-order/', CreateOrderView.as_view(), name='create-order'),
                   path('order/<int:order_id>/change-status/', OrderStatusChangeView.as_view(),
