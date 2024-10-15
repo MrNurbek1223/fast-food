@@ -24,7 +24,6 @@ schema_view = get_schema_view(
     ),
     public=True,
     permission_classes=[permissions.AllowAny, ],
-    authentication_classes=[JWTAuthentication, ],
 )
 
 router = DefaultRouter()
@@ -42,12 +41,9 @@ urlpatterns = [
                        name='change-order-status'),
                   path('nearest-branches/', NearestBranchView.as_view(), name='nearest-branches'),
                   path('', include(router.urls)),
-                  re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0),
-                          name='schema-json'),
-                  path('swagger1/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-                  path('redoc1/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 
-                  path('api/docs<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+
+                  path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
                   path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
                   path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL,
