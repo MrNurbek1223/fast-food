@@ -14,19 +14,39 @@ from django.contrib.gis.db.models.functions import Distance
 from .utils import calculate_preparation_time
 
 
+# class AdminOrderListView(generics.ListAPIView):
+#     serializer_class = OrderSerializer
+#     permission_classes = [IsAuthenticated, BranchAdminPermission]
+#
+#     def get_queryset(self):
+#         branch = self.request.user.admin_branches.first()
+#         if not branch:
+#             raise ValidationError("Sizga hech qanday filial tayinlanmagan.")
+#         queryset = Order.objects.filter(branch_id=branch.id)
+#         status_filter = self.request.query_params.get('status')
+#         if status_filter:
+#             queryset = queryset.filter(status=status_filter)
+#         return queryset
+
+
 class AdminOrderListView(generics.ListAPIView):
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated, BranchAdminPermission]
 
     def get_queryset(self):
-        branch = self.request.user.admin_branches.first()
-        if not branch:
-            raise ValidationError("Sizga hech qanday filial tayinlanmagan.")
+        branch_id = self.request.query_params.get('branch_id')
+        if not branch_id:
+            raise ValidationError("Filial ID kiritilishi shart.")
+        try:
+            branch = Branch.objects.get(id=branch_id, admin=self.request.user)
+        except Branch.DoesNotExist:
+            raise ValidationError("Siz kiritgan filial mavjud emas yoki sizga tayinlanmagan.")
         queryset = Order.objects.filter(branch_id=branch.id)
         status_filter = self.request.query_params.get('status')
         if status_filter:
             queryset = queryset.filter(status=status_filter)
         return queryset
+
 
 
 class CreateOrderView(APIView):
