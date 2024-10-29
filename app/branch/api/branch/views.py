@@ -1,15 +1,10 @@
-from django.shortcuts import render
+from .pagination import NearestBranchPagination
 from .serializers import BranchSerializer
 from .models import Branch
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
-from rest_framework import viewsets, permissions, status, generics
-from page.permissions import IsAdminOrWaiter
 from rest_framework.exceptions import PermissionDenied
-from rest_framework import viewsets, permissions, status, generics
-from rest_framework.views import APIView
+from rest_framework import viewsets
 from django.contrib.gis.geos import Point
 from django.contrib.gis.db.models.functions import Distance
 
@@ -20,44 +15,43 @@ class BranchViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        if self.request.user.role == 'admin':
-            longitude = self.request.data.get('longitude')
-            latitude = self.request.data.get('latitude')
-            if longitude and latitude:
-                location = Point(float(longitude), float(latitude), srid=4326)
-                serializer.save(location=location)
-            else:
-                raise PermissionDenied("Filial joylashuvini to'liq kiriting.")
-        else:
+        if self.request.user.role != 'admin':
             raise PermissionDenied("Faqat adminlar filial yaratishi mumkin.")
+        serializer.save()
 
     def perform_update(self, serializer):
         branch = self.get_object()
-        if self.request.user.role == 'admin' or self.request.user == branch.admin:
-            longitude = self.request.data.get('longitude')
-            latitude = self.request.data.get('latitude')
-            if longitude and latitude:
-                location = Point(float(longitude), float(latitude), srid=4326)
-                serializer.save(location=location)
-            else:
-                serializer.save()
-        else:
+        if self.request.user.role != 'admin' and self.request.user != branch.admin:
             raise PermissionDenied("Siz faqat o'zingiz boshqaradigan filialni o'zgartira olasiz.")
+        serializer.save()
 
     def perform_destroy(self, instance):
-        if self.request.user.role == 'admin' or self.request.user == instance.admin:
-            instance.delete()
-        else:
+
+        if self.request.user.role != 'admin' and self.request.user != instance.admin:
             raise PermissionDenied("Siz faqat o'zingiz boshqaradigan filialni o'chira olasiz.")
+        instance.delete()
 
 
-class NearestBranchView(APIView):
-    def get(self, request):
-        latitude = float(request.query_params.get('latitude'))
-        longitude = float(request.query_params.get('longitude'))
+class NearestBranchViewSet(viewsets.ModelViewSet):
+    queryset = Branch.objects.all()
+    serializer_class = BranchSerializer
+    permission_classes = [AllowAny]
+    pagination_class = NearestBranchPagination
 
-        user_location = Point(longitude, latitude, srid=4326)
-        branches = Branch.objects.annotate(distance=Distance('location', user_location)).order_by('distance')[:5]
+    def list(self, request, *args, **kwargs):
+        latitude = request.query_params.get('latitude')
+        longitude = request.query_params.get('longitude')
 
-        serializer = BranchSerializer(branches, many=True)
+        if latitude and longitude:
+            user_location = Point(float(longitude), float(latitude), srid=4326)
+            branches = Branch.objects.annotate(distance=Distance('location', user_location)).order_by('distance')
+        else:
+            branches = Branch.objects.all()
+
+        page = self.paginate_queryset(branches)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(branches, many=True)
         return Response(serializer.data)

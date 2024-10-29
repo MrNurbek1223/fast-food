@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_filters',
     'drf_yasg',
     'page',
     'app.branch',
@@ -83,14 +84,24 @@ SIMPLE_JWT = {
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.contrib.gis.db.backends.postgis',
+#         'NAME': env('DB_NAME', default='fast'),
+#         'USER': env('DB_USER', default='postgres'),
+#         'PASSWORD': env('DB_PASSWORD', default='123'),
+#         'HOST': env('DB_HOST', default='127.0.0.1'),
+#         'PORT': env('DB_PORT', default='5432'),
+#     }
+# }
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': env('DB_NAME', default='fast'),
-        'USER': env('DB_USER', default='postgres'),
-        'PASSWORD': env('DB_PASSWORD', default='123'),
-        'HOST': env('DB_HOST', default='127.0.0.1'),
-        'PORT': env('DB_PORT', default='5432'),
+        'NAME': 'fast',
+        'USER': 'postgres',
+        'PASSWORD': '123',
+        'HOST': 'db',
+        'PORT': '5432',
     }
 }
 # Password validation

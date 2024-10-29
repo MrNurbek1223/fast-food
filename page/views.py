@@ -1,22 +1,20 @@
-from django.shortcuts import render
-from .models import *
-from .serializers import *
+from rest_framework_simplejwt.tokens import RefreshToken
+from .models import User
+from .serializers import CustomuserSerializer, LoginSerializer
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.decorators import api_view, permission_classes, action
-from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
-from rest_framework import viewsets, permissions, status, generics
-from page.permissions import IsAdminOrWaiter
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.permissions import AllowAny
+from rest_framework import status, generics
 
 
-@api_view(['POST'])
-@permission_classes([AllowAny, ])
-def register_user(request):
-    if request.method == 'POST':
-        serializer = CustomuserSerializer(data=request.data)
+class RegisterUserView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = CustomuserSerializer
+    permission_classes = [AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            user = serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -28,13 +26,9 @@ class LoginAPIView(generics.GenericAPIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-
         user = serializer.validated_data['user']
-
         refresh = RefreshToken.for_user(user)
-
         return Response({
-
             'access': str(refresh.access_token),
             'refresh': str(refresh),
             'user_id': user.id,

@@ -1,5 +1,5 @@
 from django.core.exceptions import ValidationError
-from .models import Order
+from api.order.models import Order
 
 class OrderService:
     """

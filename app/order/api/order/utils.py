@@ -1,19 +1,22 @@
-from django.utils.timezone import now, timedelta
+from django.db.models import Sum, F
+from .models import  OrderItem
 
 
+def calculate_delivery_time(distance_km):
+    return distance_km * 3
 
-def calculate_preparation_time(order_items):
-    unique_items = {}
-    for item in order_items:
-        if item.food_item.id in unique_items:
-            unique_items[item.food_item.id] += item.quantity
-        else:
-            unique_items[item.food_item.id] = item.quantity
 
-    total_time = 0
-    for quantity in unique_items.values():
-        total_time += (quantity // 4) * 5
-        if quantity % 4 > 0:
-            total_time += 5
+def calculate_total_preparation_time(branch, new_order_items):
+    pending_orders = OrderItem.objects.filter(
+        order__branch=branch,
+        order__status='preparing'
+    )
 
-    return total_time
+    total_preparation_time = 0
+
+    for item in pending_orders:
+        total_preparation_time += ((item.quantity + 3) // 4) * 5
+    for item in new_order_items:
+        total_preparation_time += ((item.quantity + 3) // 4) * 5
+
+    return total_preparation_time

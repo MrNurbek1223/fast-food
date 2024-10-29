@@ -1,0 +1,24 @@
+FROM python:3.12-alpine
+
+LABEL maintainer="@pedbad"
+
+ENV PYTHONUNBUFFERED 1
+
+
+COPY . /core
+WORKDIR /core
+EXPOSE 8000
+
+RUN python -m venv /venv && \
+    /venv/bin/pip install --upgrade pip && \
+    /venv/bin/pip install -r /core/requirements.txt && \
+    rm -rf /core && \
+    adduser \
+        --disabled-password \
+        --no-create-home \
+        django-user
+
+ENV PATH="/venv/bin:$PATH"
+
+USER django-user
+

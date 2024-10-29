@@ -1,9 +1,9 @@
-from django.shortcuts import render
-from rest_framework import viewsets, permissions, status, generics
-from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser ,IsAuthenticatedOrReadOnly
+from rest_framework import viewsets
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from .models import  FoodItem
 from .serializers import FoodItemSerializer
-from rest_framework.views import APIView
+
 
 class FoodItemViewSetGet(viewsets.ModelViewSet):
     queryset = FoodItem.objects.all()
