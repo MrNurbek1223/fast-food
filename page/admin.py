@@ -1,7 +1,7 @@
 from django.contrib import admin
 from page.models import User
 from app.branch.api.branch.models import Branch
-from app.food.api.food.models import FoodItem
+from app.food.api.food.models import FoodItem, Category
 from app.order.api.order.models import Order ,OrderItem
 
 
@@ -27,3 +27,4 @@ admin.site.register(Order, OrderAdmin)
 admin.site.register(OrderItem)
 admin.site.register(Branch)
 admin.site.register(FoodItem)
+admin.site.register(Category)

@@ -2,7 +2,7 @@ from rest_framework.routers import DefaultRouter
 from page.views import  LoginAPIView, RegisterUserView
 from app.branch.api.branch.views import BranchViewSet, NearestBranchViewSet
 from app.food.api.food.views import FoodItemViewSet, FoodItemViewSetGet
-from app.order.api.order.views import CreateOrderView, AdminOrderViewSet, OrderStatusChangeView
+from app.order.api.order.views import CreateOrderView, AdminOrderViewSet, OrderStatusChangeView, OrderViewSet
 from django.contrib import admin
 from qozon import settings
 from django.conf.urls.static import static
@@ -13,8 +13,8 @@ from django.urls import path ,include
 
 schema_view = get_schema_view(
     openapi.Info(
-        title='Chat API',
-        description='Chat API',
+        title='API',
+        description='API',
         default_version="v1",
     ),
     public=True,
@@ -27,7 +27,7 @@ router.register(r'fooditems', FoodItemViewSet)
 router.register(r'fooditems_get', FoodItemViewSetGet, basename='fooditem-get')
 router.register(r'nearest-branches', NearestBranchViewSet, basename='nearest-branches')
 router.register(r'get-orders', AdminOrderViewSet, basename='get-orders')
-
+router.register(r'my-orders', OrderViewSet, basename='order')
 urlpatterns = [
                   path('admin/', admin.site.urls),
                   path('register/', RegisterUserView.as_view(), name='register'),

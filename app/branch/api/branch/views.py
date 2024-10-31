@@ -1,3 +1,5 @@
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 from .pagination import NearestBranchPagination
 from .serializers import BranchSerializer
 from .models import Branch
@@ -14,17 +16,38 @@ class BranchViewSet(viewsets.ModelViewSet):
     serializer_class = BranchSerializer
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_summary="Create a new branch (Admin only)",
+        responses={
+            201: "Branch created successfully",
+            403: "Permission denied"
+        }
+    )
     def perform_create(self, serializer):
         if self.request.user.role != 'admin':
             raise PermissionDenied("Faqat adminlar filial yaratishi mumkin.")
         serializer.save()
 
+    @swagger_auto_schema(
+        operation_summary="Update a branch (Admin or Branch Manager)",
+        responses={
+            200: "Branch updated successfully",
+            403: "Permission denied"
+        }
+    )
     def perform_update(self, serializer):
         branch = self.get_object()
         if self.request.user.role != 'admin' and self.request.user != branch.admin:
             raise PermissionDenied("Siz faqat o'zingiz boshqaradigan filialni o'zgartira olasiz.")
         serializer.save()
 
+    @swagger_auto_schema(
+        operation_summary="Delete a branch (Admin or Branch Manager)",
+        responses={
+            204: "Branch deleted successfully",
+            403: "Permission denied"
+        }
+    )
     def perform_destroy(self, instance):
 
         if self.request.user.role != 'admin' and self.request.user != instance.admin:
@@ -38,6 +61,14 @@ class NearestBranchViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     pagination_class = NearestBranchPagination
 
+    @swagger_auto_schema(
+        operation_summary="List nearest branches",
+        manual_parameters=[
+            openapi.Parameter('latitude', openapi.IN_QUERY, description="User's latitude", type=openapi.TYPE_NUMBER),
+            openapi.Parameter('longitude', openapi.IN_QUERY, description="User's longitude", type=openapi.TYPE_NUMBER),
+        ],
+        responses={200: BranchSerializer(many=True)}
+    )
     def list(self, request, *args, **kwargs):
         latitude = request.query_params.get('latitude')
         longitude = request.query_params.get('longitude')

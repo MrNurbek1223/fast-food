@@ -2,6 +2,7 @@ from django.db import models
 from app.branch.api.branch.models import Branch
 from app.food.api.food.models import FoodItem
 from page.models import User
+from django.contrib.gis.db import models as gis_models
 
 
 class Order(models.Model):
@@ -16,9 +17,9 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
     delivery_address = models.CharField(max_length=255)
-    delivery_latitude = models.FloatField(null=True, blank=True)
-    delivery_longitude = models.FloatField(null=True, blank=True)
+    location = gis_models.PointField(null=True, blank=True)
     total_time = models.IntegerField(default=0)
+    food_preparation_time = models.IntegerField(default=0)
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, default='ordered')
