@@ -1,9 +1,10 @@
 from django.core.exceptions import ValidationError
 from .utils import calculate_total_preparation_time, calculate_delivery_time
-
+from django.db import transaction
 
 class OrderService:
     @staticmethod
+    @transaction.atomic
     def change_status(order, status, user):
         if not user.admin_branches.filter(id=order.branch.id).exists():
             raise ValidationError("Siz faqat o‘z filialingizdagi buyurtmalarni boshqarishingiz mumkin.")
@@ -21,6 +22,7 @@ class OrderService:
         return order
 
     @staticmethod
+    @transaction.atomic
     def _set_preparing(order):
         if order.status != 'ordered':
             raise ValidationError("Buyurtma hali qabul qilinmagan yoki noto‘g‘ri holatda.")
@@ -38,6 +40,7 @@ class OrderService:
         order.save()
 
     @staticmethod
+    @transaction.atomic
     def _set_on_the_way(order):
         if order.status != 'preparing':
             raise ValidationError("Buyurtma hali tayyor emas.")
@@ -45,6 +48,7 @@ class OrderService:
         order.save()
 
     @staticmethod
+    @transaction.atomic
     def _set_delivered(order):
         if order.status != 'on_the_way':
             raise ValidationError("Buyurtma hali yo'lga chiqmagan.")
@@ -52,6 +56,7 @@ class OrderService:
         order.save()
 
     @staticmethod
+    @transaction.atomic
     def _set_rejected(order):
         if order.status != 'ordered':
             raise ValidationError("Buyurtma hali qabul qilinmagan yoki qayta ishlangan.")
